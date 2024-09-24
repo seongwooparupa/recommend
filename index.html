@@ -113,8 +113,9 @@
   <!-- 고민 입력 화면 -->
   <div class="container" id="input-container">
     <h1>당신의 고민을 알려주세요</h1>
-    <textarea placeholder="최근 직장 상사와 의견 충돌로 감정적 마찰이 있었습니다. 매일 봐야 하는 상황에서 눈치보다보니 스트레스가 너무 커요. 이럴 때 읽으면 좋을 책이 있을까요?"></textarea>
-    <button onclick="showLoading()">책 추천 받기</button>
+    <textarea placeholder="최근 직장 상사와 의견 충돌로 감정적 마찰이 있었습니다. 매일 봐야 하는 상황에서 눈치보다 보니 스트레스가 너무 커요. 이럴 때 읽으면 좋을 책이 있을까요?"></textarea>
+    <!-- 여기 버튼에 onclick="sendData()" 속성을 추가했습니다 -->
+    <button onclick="sendData()">책 추천 받기</button>
   </div>
 
   <!-- 로딩 화면 -->
@@ -126,37 +127,62 @@
 
   <!-- 책 추천 결과 화면 -->
   <div class="result-container" id="result-container">
-    <h1>추천된 책</h1>
-    <img src="https://via.placeholder.com/200" alt="책 표지" />
-    <div class="quote">"이 문장이 당신에게 힘이 되길 바랍니다."</div>
+    <h1>추천된 책 제목</h1>
+    <img src="" alt="책 표지" />
+    <div class="quote">"여기에 책 속 한 문장이 나옵니다."</div>
     <button onclick="restart()">다시 추천 받기</button>
   </div>
 
   <script>
+    function sendData() {
+      const userInput = document.querySelector('textarea').value;
+
+      // 로딩 화면 보이기
+      showLoading();
+
+      fetch('https://d1b65366-4eb1-4875-82f7-3ab219fe894e-00-1et5wz5uz9gg8.pike.replit.dev/recommend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'user_input': userInput })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // 결과 화면에 데이터 표시
+        showResult(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
     function showLoading() {
       // 입력 화면 숨기기
       document.getElementById('input-container').style.display = 'none';
-      
+
       // 로딩 화면 보이기
       document.getElementById('loading-container').style.display = 'block';
-
-      // 3초 후 책 추천 화면 보여주기
-      setTimeout(showResult, 3000);
     }
 
-    function showResult() {
+    function showResult(book) {
       // 로딩 화면 숨기기
       document.getElementById('loading-container').style.display = 'none';
-      
-      // 책 추천 결과 화면 보이기
+
+      // 결과 화면 보이기
       document.getElementById('result-container').style.display = 'block';
+
+      // 책 정보 표시하기
+      document.querySelector('.result-container h1').innerText = book.title;
+      document.querySelector('.result-container img').src = book.image;
+      document.querySelector('.quote').innerText = `"${book.quote}"`;
     }
 
     function restart() {
-      // 책 추천 결과 화면 숨기기
+      // 결과 화면 숨기기
       document.getElementById('result-container').style.display = 'none';
 
-      // 입력 화면 다시 보이기
+      // 입력 화면 보이기
       document.getElementById('input-container').style.display = 'block';
     }
   </script>

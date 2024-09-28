@@ -1,4 +1,4 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = require('node-fetch'); // 기존 import 대신 require 사용
 
 exports.handler = async function(event, context) {
   try {
@@ -17,9 +17,7 @@ exports.handler = async function(event, context) {
         model: 'text-davinci-003',
         prompt: `다음 고민에 어울리는 책을 추천해줘:\n\n고민: ${userInput}\n\n추천 책:`,
         max_tokens: 150,
-        temperature: 0.7,
-        n: 1,
-        stop: null
+        temperature: 0.7
       })
     });
 

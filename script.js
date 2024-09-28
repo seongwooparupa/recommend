@@ -5,23 +5,16 @@ document.getElementById('recommend-btn').addEventListener('click', function() {
   const resultDiv = document.getElementById('result');
   resultDiv.innerHTML = '책을 추천하고 있습니다...';
 
-  fetch('https://api.openai.com/v1/completions', {
+  fetch('/.netlify/functions/recommend', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer YOUR_OPENAI_API_KEY' // 여기서 YOUR_OPENAI_API_KEY를 실제 키로 대체하세요
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      model: 'text-davinci-003',
-      prompt: `다음 고민에 어울리는 책을 추천해줘:\n\n고민: ${userInput}\n\n추천 책:`,
-      max_tokens: 150,
-      temperature: 0.7
-    })
+    body: JSON.stringify({ 'user_input': userInput })
   })
   .then(response => response.json())
   .then(data => {
-    const recommendation = data.choices[0].text.trim();
-    resultDiv.innerHTML = `<p>${recommendation}</p>`;
+    resultDiv.innerHTML = `<p>${data.recommendation}</p>`;
   })
   .catch(error => {
     console.error('Error:', error);

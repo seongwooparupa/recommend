@@ -18,23 +18,29 @@ async function recommendBook(userInput) {
   const openAIResult = await openAIResponse.json();
   const keyword = openAIResult.choices[0].message.content.trim();  // OpenAI로부터 생성된 키워드 추출
 
-  // 2. 알라딘 도서 API로 생성된 키워드를 사용해 책 검색
-  const ttbKey = 'YOUR_ALADIN_API_KEY';  // 발급받은 알라딘 API 키를 사용
-  const response = await fetch(`https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=${ttbKey}&Query=${keyword}&MaxResults=10&start=1&SearchTarget=Book&output=JS`, {
-    method: 'GET'
+  // 2. 네이버 도서 API로 생성된 키워드를 사용해 책 검색
+  const clientId = 'YOUR_NAVER_CLIENT_ID';  // 발급받은 네이버 Client ID
+  const clientSecret = 'YOUR_NAVER_CLIENT_SECRET';  // 발급받은 네이버 Client Secret
+
+  const response = await fetch(`https://openapi.naver.com/v1/search/book.json?query=${keyword}`, {
+    method: 'GET',
+    headers: {
+      'X-Naver-Client-Id': clientId,
+      'X-Naver-Client-Secret': clientSecret
+    }
   });
 
   const data = await response.json();
 
   // 3. 첫 번째 책 데이터를 반환 (또는 원하는 조건에 맞는 책을 선택)
-  if (data.item && data.item.length > 0) {
-    const book = data.item[0];  // 첫 번째 책 정보 선택
+  if (data.items && data.items.length > 0) {
+    const book = data.items[0];  // 첫 번째 책 정보 선택
 
     return {
       title: book.title,
       author: book.author,
       description: book.description,
-      image: book.cover,
+      image: book.image,
       link: book.link
     };
   } else {

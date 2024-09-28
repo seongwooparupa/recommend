@@ -10,13 +10,13 @@ exports.handler = async function(event, context) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
     },
-body: JSON.stringify({
-  model: 'gpt-3.5-turbo',
-  messages: [
-    { role: 'system', content: 'You are a helpful assistant that recommends books based on user concerns.' },
-    { role: 'user', content: `사용자가 이런 고민을 하고 있습니다: ${userInput}. 이 고민을 해결할 수 있는 책을 찾기 위한 짧고 간단한 키워드를 추천해 주세요. 키워드는 1~2개의 단어로만 구성되어야 합니다.` }
-  ]
-})
+  body: JSON.stringify({
+    model: 'gpt-3.5-turbo',
+    messages: [
+      { role: 'system', content: 'You are a helpful assistant that recommends books based on user concerns.' },
+      { role: 'user', content: `사용자가 이런 고민을 하고 있습니다: ${userInput}. 이 고민을 해결할 수 있는 책을 찾기 위한 짧고 간단한 키워드를 추천해 주세요. 키워드는 1~2개의 단어로만 구성되어야 합니다.` }
+    ]
+  })
   });
 
   const openAIResult = await openAIResponse.json();

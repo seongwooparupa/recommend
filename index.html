@@ -56,8 +56,12 @@
       background-color: #0056b3;
     }
 
-    .result, .loading {
+    /* 로딩 화면 및 결과 화면은 기본적으로 숨김 처리 */
+    .loading, .result {
       display: none;
+    }
+
+    .loading {
       font-size: 18px;
       margin-top: 20px;
     }
@@ -87,20 +91,29 @@
 </head>
 <body>
   <div class="container">
-    <h1>책 추천 받기</h1>
-    <textarea id="user-input" placeholder="최근 직장 상사와 의견 충돌로 감정적 마찰이 있었습니다. 매일 봐야 하는 상황에서 눈치보다보니 스트레스가 너무 커요. 이럴때 읽으면 좋을 책이 있을까요?"></textarea>
-    <button id="recommend-btn" onclick="sendData()">책 추천 받기</button>
+    <!-- 입력 화면 -->
+    <div class="input-screen">
+      <h1>책 추천 받기</h1>
+      <textarea id="user-input" placeholder="최근 직장 상사와 의견 충돌로 감정적 마찰이 있었습니다. 매일 봐야 하는 상황에서 눈치보다보니 스트레스가 너무 커요. 이럴때 읽으면 좋을 책이 있을까요?"></textarea>
+      <button id="recommend-btn" onclick="sendData()">책 추천 받기</button>
+    </div>
+
+    <!-- 로딩 화면 -->
     <div class="loading">책을 추천하고 있습니다...</div>
+
+    <!-- 결과 화면 -->
     <div class="result"></div>
   </div>
 
   <script>
     async function sendData() {
       const userInput = document.getElementById('user-input').value;
-      const resultDiv = document.querySelector('.result');
+      const inputScreen = document.querySelector('.input-screen');
       const loadingDiv = document.querySelector('.loading');
+      const resultDiv = document.querySelector('.result');
 
-      // 로딩 메시지 표시
+      // 입력 화면 숨기고 로딩 화면 보여줌
+      inputScreen.style.display = 'none';
       loadingDiv.style.display = 'block';
       resultDiv.style.display = 'none';
 
@@ -134,7 +147,7 @@
         resultDiv.innerHTML = '문제가 발생했습니다. 다시 시도해주세요.';
       }
 
-      // 로딩 메시지 숨기고 결과 표시
+      // 로딩 화면 숨기고 결과 화면 보여줌
       loadingDiv.style.display = 'none';
       resultDiv.style.display = 'block';
     }

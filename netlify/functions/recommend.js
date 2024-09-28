@@ -1,3 +1,4 @@
+// OpenAI와 네이버 도서 API를 호출하는 함수
 async function getBookRecommendation(userInput) {
   // OpenAI API 호출
   const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -43,3 +44,6 @@ async function getBookRecommendation(userInput) {
     throw new Error('책을 찾을 수 없습니다.');
   }
 }
+
+// 전역에서 사용할 수 있도록 window 객체에 함수 추가
+window.getBookRecommendation = getBookRecommendation;

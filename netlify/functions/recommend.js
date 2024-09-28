@@ -10,17 +10,20 @@ exports.handler = async function(event, context) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
     },
-    body: JSON.stringify({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant that recommends books based on user concerns.' },
-        { role: 'user', content: `사용자가 이런 고민을 하고 있습니다: ${userInput}. 이 고민을 해결할 수 있는 책을 추천하기 위해 적절한 키워드를 추천해 주세요.` }
-      ]
-    })
+body: JSON.stringify({
+  model: 'gpt-3.5-turbo',
+  messages: [
+    { role: 'system', content: 'You are a helpful assistant that recommends books based on user concerns.' },
+    { role: 'user', content: `사용자가 이런 고민을 하고 있습니다: ${userInput}. 이 고민을 해결할 수 있는 책을 찾기 위한 짧고 간단한 키워드를 추천해 주세요. 키워드는 1~2개의 단어로만 구성되어야 합니다.` }
+  ]
+})
   });
 
   const openAIResult = await openAIResponse.json();
   const keyword = openAIResult.choices[0].message.content.trim();
+
+  // 키워드를 로그로 출력해 확인
+  console.log("생성된 키워드: ", keyword);
 
   // 네이버 도서 API 호출
   const naverResponse = await fetch(`https://openapi.naver.com/v1/search/book.json?query=${keyword}`, {
@@ -48,6 +51,7 @@ exports.handler = async function(event, context) {
       })
     };
   } else {
+    console.log("책을 찾을 수 없습니다. 키워드:", keyword);
     return {
       statusCode: 404,
       body: JSON.stringify({ message: '책을 찾을 수 없습니다.' })

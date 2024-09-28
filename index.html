@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>책 추천 서비스</title>
   <style>
-    /* CSS를 head 내부에 임시로 넣었습니다 */
     body {
       font-family: 'Pretendard', sans-serif;
       margin: 0;
@@ -62,6 +61,28 @@
       font-size: 18px;
       margin-top: 20px;
     }
+
+    .book-cover {
+      width: 150px;
+      height: auto;
+      margin-top: 10px;
+    }
+
+    .book-info {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .book-link {
+      display: block;
+      margin-top: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .book-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -95,7 +116,17 @@
         const data = await response.json();
 
         if (response.ok) {
-          resultDiv.innerHTML = `<p>${data.recommendation}</p>`;
+          const { bookTitle, bookSummary, bookCover, purchaseLink, emotionalExplanation } = data;
+
+          resultDiv.innerHTML = `
+            <img src="${bookCover}" alt="${bookTitle}" class="book-cover" />
+            <div class="book-info">
+              <h2>${bookTitle}</h2>
+              <p>${bookSummary}</p>
+              <a href="${purchaseLink}" class="book-link" target="_blank">책 구매하기</a>
+              <p><strong>추천 이유:</strong> ${emotionalExplanation}</p>
+            </div>
+          `;
         } else {
           resultDiv.innerHTML = `<p>오류가 발생했습니다: ${data.error}</p>`;
         }

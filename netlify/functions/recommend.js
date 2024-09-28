@@ -7,7 +7,7 @@ exports.handler = async function(event, context) {
 
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-    const response = await fetch('https://api.openai.com/v1/completions', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,16 @@ exports.handler = async function(event, context) {
 
     const result = await response.json();
 
-    // AI 응답 데이터에서 책 제목, 설명, 추천 이유를 추출
+    // 응답 데이터의 유효성 검사
+    if (!response.ok || !result.choices || result.choices.length === 0) {
+      console.error('OpenAI API 에러:', result);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'OpenAI 응답이 유효하지 않습니다.' })
+      };
+    }
+
+    // 응답이 유효할 때 처리
     const recommendedText = result.choices[0].message.content.split('\n');
     const bookTitle = recommendedText[0];  // 첫 번째 줄이 책 제목
     const bookSummary = recommendedText[1]; // 두 번째 줄이 요약 설명

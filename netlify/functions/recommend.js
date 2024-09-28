@@ -19,8 +19,8 @@ async function recommendBook(userInput) {
   const keyword = openAIResult.choices[0].message.content.trim();  // OpenAI로부터 생성된 키워드 추출
 
   // 2. 네이버 도서 API로 생성된 키워드를 사용해 책 검색
-  const clientId = 'YOUR_NAVER_CLIENT_ID';  // 발급받은 네이버 Client ID
-  const clientSecret = 'YOUR_NAVER_CLIENT_SECRET';  // 발급받은 네이버 Client Secret
+  const clientId = 'gRS51YYNfgxUF_4Fcsbu';  // 발급받은 네이버 Client ID
+  const clientSecret = 'onEU6BJfyv';  // 발급받은 네이버 Client Secret
 
   const response = await fetch(`https://openapi.naver.com/v1/search/book.json?query=${keyword}`, {
     method: 'GET',

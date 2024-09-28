@@ -1,5 +1,11 @@
+// Netlify 환경 변수로 API 키를 불러옴
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID;
+const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET;
+
+// OpenAI API를 사용하여 고민에 맞는 키워드 생성
 async function recommendBook(userInput) {
-  // 1. OpenAI API로 고민 분석 및 키워드 생성
+  // OpenAI API 호출
   const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -15,24 +21,22 @@ async function recommendBook(userInput) {
     })
   });
 
+  // OpenAI API 응답에서 키워드 추출
   const openAIResult = await openAIResponse.json();
-  const keyword = openAIResult.choices[0].message.content.trim();  // OpenAI로부터 생성된 키워드 추출
+  const keyword = openAIResult.choices[0].message.content.trim();
 
-  // 2. 네이버 도서 API로 생성된 키워드를 사용해 책 검색
-  const clientId = 'gRS51YYNfgxUF_4Fcsbu';  // 발급받은 네이버 Client ID
-  const clientSecret = 'onEU6BJfyv';  // 발급받은 네이버 Client Secret
-
+  // 네이버 도서 API 호출
   const response = await fetch(`https://openapi.naver.com/v1/search/book.json?query=${keyword}`, {
     method: 'GET',
     headers: {
-      'X-Naver-Client-Id': clientId,
-      'X-Naver-Client-Secret': clientSecret
+      'X-Naver-Client-Id': NAVER_CLIENT_ID,
+      'X-Naver-Client-Secret': NAVER_CLIENT_SECRET
     }
   });
 
   const data = await response.json();
 
-  // 3. 첫 번째 책 데이터를 반환 (또는 원하는 조건에 맞는 책을 선택)
+  // 첫 번째 책 데이터를 반환
   if (data.items && data.items.length > 0) {
     const book = data.items[0];  // 첫 번째 책 정보 선택
 
@@ -48,6 +52,7 @@ async function recommendBook(userInput) {
   }
 }
 
+// 책 추천 결과를 화면에 표시
 async function showRecommendedBook() {
   const userInput = document.getElementById('user-input').value;
   const resultDiv = document.querySelector('.result');

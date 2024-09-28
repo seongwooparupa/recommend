@@ -1,4 +1,4 @@
-const fetch = require('node-fetch'); // 기존 import 대신 require 사용
+const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
   try {
@@ -7,15 +7,18 @@ exports.handler = async function(event, context) {
 
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-    const response = await fetch('https://api.openai.com/v1/completions', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'text-davinci-003',
-        prompt: `다음 고민에 어울리는 책을 추천해줘:\n\n고민: ${userInput}\n\n추천 책:`,
+        model: 'gpt-3.5-turbo',  // 최신 모델로 변경
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant that recommends books.' },
+          { role: 'user', content: `다음 고민에 어울리는 책을 추천해줘:\n\n고민: ${userInput}\n\n추천 책:` }
+        ],
         max_tokens: 150,
         temperature: 0.7
       })
@@ -24,7 +27,7 @@ exports.handler = async function(event, context) {
     const result = await response.json();
 
     if (response.ok) {
-      const recommendation = result.choices[0].text.trim();
+      const recommendation = result.choices[0].message.content.trim();
 
       return {
         statusCode: 200,

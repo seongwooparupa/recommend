@@ -2,190 +2,33 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>고민 입력</title>
+  <title>책 추천 서비스</title>
   <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Pretendard', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4;
-    }
-    .container {
       text-align: center;
-      max-width: 600px;
-      width: 100%;
-      padding: 40px;
-      background-color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin: 50px;
     }
-    textarea {
-      width: 100%;
-      height: 200px;
-      padding: 20px;
-      font-size: 20px;
-      line-height: 1.5;
-      border: 2px solid #007BFF;
-      border-radius: 8px;
-      resize: none;
-      outline: none;
+    #user-input {
+      width: 80%;
+      height: 100px;
     }
-    button {
+    #recommend-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
       margin-top: 20px;
-      padding: 14px 28px;
-      font-size: 20px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    h1 {
-      font-size: 28px;
-      margin-bottom: 24px;
-    }
-
-    /* 로딩 화면 스타일 */
-    .loading-container {
-      display: none;
-      text-align: center;
-    }
-
-    .loading-container .loading-bar {
-      margin: 20px auto;
-      width: 100px;
-      height: 10px;
-      background-color: #ccc;
-      border-radius: 5px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .loading-container .loading-bar:before {
-      content: '';
-      display: block;
-      width: 30%;
-      height: 100%;
-      background-color: #007BFF;
-      position: absolute;
-      animation: loading 1.5s infinite;
-    }
-
-    @keyframes loading {
-      0% { left: 0; }
-      100% { left: 100%; }
-    }
-
-    /* 책 추천 결과 화면 */
-    .result-container {
-      display: none;
-      text-align: center;
-    }
-
-    .result-container img {
-      width: 200px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-
-    .quote {
-      font-size: 20px;
-      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
+  <h1>당신의 고민을 입력해주세요</h1>
+  <textarea id="user-input" placeholder="여기에 고민을 입력하세요"></textarea><br>
+  <button id="recommend-btn">책 추천 받기</button>
+  <div id="result"></div>
 
-  <!-- 고민 입력 화면 -->
-  <div class="container" id="input-container">
-    <h1>당신의 고민을 알려주세요</h1>
-    <textarea placeholder="최근 직장 상사와 의견 충돌로 감정적 마찰이 있었습니다. 매일 봐야 하는 상황에서 눈치보다 보니 스트레스가 너무 커요. 이럴 때 읽으면 좋을 책이 있을까요?"></textarea>
-    <!-- 여기 버튼에 onclick="sendData()" 속성을 추가했습니다 -->
-    <button onclick="sendData()">책 추천 받기</button>
-  </div>
-
-  <!-- 로딩 화면 -->
-  <div class="loading-container" id="loading-container">
-    <h1>책을 찾고 있습니다...</h1>
-    <div class="loading-bar"></div>
-    <p>당신의 고민에 맞는 책을 찾고 있어요...</p>
-  </div>
-
-  <!-- 책 추천 결과 화면 -->
-  <div class="result-container" id="result-container">
-    <h1>추천된 책 제목</h1>
-    <img src="" alt="책 표지" />
-    <div class="quote">"여기에 책 속 한 문장이 나옵니다."</div>
-    <button onclick="restart()">다시 추천 받기</button>
-  </div>
-
-  <script>
-    function sendData() {
-      const userInput = document.querySelector('textarea').value;
-
-      // 로딩 화면 보이기
-      showLoading();
-
-      fetch('https://d1b65366-4eb1-4875-82f7-3ab219fe894e-00-1et5wz5uz9gg8.pike.replit.dev/recommend', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'user_input': userInput })
-      })
-      .then(response => response.json())
-      .then(data => {
-        // 결과 화면에 데이터 표시
-        showResult(data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    }
-
-    function showLoading() {
-      // 입력 화면 숨기기
-      document.getElementById('input-container').style.display = 'none';
-
-      // 로딩 화면 보이기
-      document.getElementById('loading-container').style.display = 'block';
-    }
-
-    function showResult(book) {
-      // 로딩 화면 숨기기
-      document.getElementById('loading-container').style.display = 'none';
-
-      // 결과 화면 보이기
-      document.getElementById('result-container').style.display = 'block';
-
-      // 책 정보 표시하기
-      document.querySelector('.result-container h1').innerText = book.title;
-      document.querySelector('.result-container img').src = book.image;
-      document.querySelector('.quote').innerText = `"${book.quote}"`;
-    }
-
-    function restart() {
-      // 결과 화면 숨기기
-      document.getElementById('result-container').style.display = 'none';
-
-      // 입력 화면 보이기
-      document.getElementById('input-container').style.display = 'block';
-    }
-  </script>
-
+  <!-- JavaScript 파일 연결 -->
+  <script src="script.js"></script>
 </body>
 </html>

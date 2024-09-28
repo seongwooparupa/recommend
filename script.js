@@ -10,7 +10,7 @@ async function showRecommendedBook() {
   resultDiv.style.display = 'none';
 
   try {
-    // recommend.js의 getBookRecommendation 함수 호출
+    // recommend.js에서 전역으로 노출된 getBookRecommendation 함수 호출
     const bookData = await getBookRecommendation(userInput);
 
     resultDiv.innerHTML = `

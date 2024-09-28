@@ -1,4 +1,6 @@
-document.getElementById('recommend-btn').addEventListener('click', showRecommendedBook);
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('recommend-btn').addEventListener('click', showRecommendedBook);
+});
 
 async function showRecommendedBook() {
   const userInput = document.getElementById('user-input').value;

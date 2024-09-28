@@ -14,7 +14,11 @@ document.getElementById('recommend-btn').addEventListener('click', function() {
   })
   .then(response => response.json())
   .then(data => {
-    resultDiv.innerHTML = `<p>${data.recommendation}</p>`;
+    if (data.error) {
+      resultDiv.innerHTML = `오류가 발생했습니다: ${data.error}`;
+    } else {
+      resultDiv.innerHTML = `<p>${data.recommendation}</p>`;
+    }
   })
   .catch(error => {
     console.error('Error:', error);

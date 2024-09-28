@@ -1,27 +1,30 @@
-document.getElementById('recommend-btn').addEventListener('click', function() {
+document.getElementById('recommend-btn').addEventListener('click', showRecommendedBook);
+
+async function showRecommendedBook() {
   const userInput = document.getElementById('user-input').value;
+  const resultDiv = document.querySelector('.result');
+  const loadingDiv = document.querySelector('.loading');
 
   // 로딩 메시지 표시
-  const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = '책을 추천하고 있습니다...';
+  loadingDiv.style.display = 'block';
+  resultDiv.style.display = 'none';
 
-  fetch('/.netlify/functions/recommend', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 'user_input': userInput })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.error) {
-      resultDiv.innerHTML = `오류가 발생했습니다: ${data.error}`;
-    } else {
-      resultDiv.innerHTML = `<p>${data.recommendation}</p>`;
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    resultDiv.innerHTML = '문제가 발생했습니다. 다시 시도해주세요.';
-  });
-});
+  try {
+    // recommend.js의 getBookRecommendation 함수 호출
+    const bookData = await getBookRecommendation(userInput);
+
+    resultDiv.innerHTML = `
+      <img src="${bookData.image}" alt="${bookData.title}" class="book-cover" />
+      <h2>${bookData.title}</h2>
+      <p>저자: ${bookData.author}</p>
+      <p>${bookData.description}</p>
+      <a href="${bookData.link}" class="book-link" target="_blank">책 구매하기</a>
+    `;
+  } catch (error) {
+    resultDiv.innerHTML = `<p>오류가 발생했습니다: ${error.message}</p>`;
+  }
+
+  // 로딩 숨기고 결과 표시
+  loadingDiv.style.display = 'none';
+  resultDiv.style.display = 'block';
+}

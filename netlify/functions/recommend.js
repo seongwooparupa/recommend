@@ -1,4 +1,8 @@
-async function getBookRecommendation(userInput) {
+const fetch = require('node-fetch');
+
+exports.handler = async function(event, context) {
+  const { userInput } = JSON.parse(event.body);
+
   // OpenAI API 호출
   const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -19,7 +23,7 @@ async function getBookRecommendation(userInput) {
   const keyword = openAIResult.choices[0].message.content.trim();
 
   // 네이버 도서 API 호출
-  const response = await fetch(`https://openapi.naver.com/v1/search/book.json?query=${keyword}`, {
+  const naverResponse = await fetch(`https://openapi.naver.com/v1/search/book.json?query=${keyword}`, {
     method: 'GET',
     headers: {
       'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID,
@@ -27,22 +31,25 @@ async function getBookRecommendation(userInput) {
     }
   });
 
-  const data = await response.json();
+  const data = await naverResponse.json();
 
   if (data.items && data.items.length > 0) {
     const book = data.items[0];  // 첫 번째 책 정보 선택
 
     return {
-      title: book.title,
-      author: book.author,
-      description: book.description,
-      image: book.image,
-      link: book.link
+      statusCode: 200,
+      body: JSON.stringify({
+        title: book.title,
+        author: book.author,
+        description: book.description,
+        image: book.image,
+        link: book.link
+      })
     };
   } else {
-    throw new Error('책을 찾을 수 없습니다.');
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ message: '책을 찾을 수 없습니다.' })
+    };
   }
-}
-
-// 전역에서 사용할 수 있도록 window 객체에 함수 추가
-window.getBookRecommendation = getBookRecommendation;
+};

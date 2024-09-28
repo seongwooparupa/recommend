@@ -12,8 +12,16 @@ async function showRecommendedBook() {
   resultDiv.style.display = 'none';
 
   try {
-    // recommend.js에서 전역으로 노출된 getBookRecommendation 함수 호출
-    const bookData = await getBookRecommendation(userInput);
+    // Netlify 함수를 호출해 책 추천 받기
+    const response = await fetch('/.netlify/functions/recommend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userInput })
+    });
+
+    const bookData = await response.json();
 
     resultDiv.innerHTML = `
       <img src="${bookData.image}" alt="${bookData.title}" class="book-cover" />

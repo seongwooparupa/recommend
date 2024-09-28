@@ -56,7 +56,6 @@
       background-color: #0056b3;
     }
 
-    /* 로딩 화면 및 결과 화면은 기본적으로 숨김 처리 */
     .loading, .result {
       display: none;
     }
@@ -70,11 +69,6 @@
       width: 150px;
       height: auto;
       margin-top: 10px;
-    }
-
-    .book-info {
-      margin-top: 20px;
-      text-align: left;
     }
 
     .book-link {
@@ -91,66 +85,13 @@
 </head>
 <body>
   <div class="container">
-    <!-- 입력 화면 -->
-    <div class="input-screen">
-      <h1>책 추천 받기</h1>
-      <textarea id="user-input" placeholder="최근 직장 상사와 의견 충돌로 감정적 마찰이 있었습니다. 매일 봐야 하는 상황에서 눈치보다보니 스트레스가 너무 커요. 이럴때 읽으면 좋을 책이 있을까요?"></textarea>
-      <button id="recommend-btn" onclick="sendData()">책 추천 받기</button>
-    </div>
-
-    <!-- 로딩 화면 -->
+    <h1>책 추천 받기</h1>
+    <textarea id="user-input" placeholder="고민을 입력해 주세요"></textarea>
+    <button onclick="showRecommendedBook()">책 추천 받기</button>
     <div class="loading">책을 추천하고 있습니다...</div>
-
-    <!-- 결과 화면 -->
     <div class="result"></div>
   </div>
 
-  <script>
-    async function sendData() {
-      const userInput = document.getElementById('user-input').value;
-      const inputScreen = document.querySelector('.input-screen');
-      const loadingDiv = document.querySelector('.loading');
-      const resultDiv = document.querySelector('.result');
-
-      // 입력 화면 숨기고 로딩 화면 보여줌
-      inputScreen.style.display = 'none';
-      loadingDiv.style.display = 'block';
-      resultDiv.style.display = 'none';
-
-      try {
-        const response = await fetch('/.netlify/functions/recommend', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ 'user_input': userInput })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          const { bookTitle, bookSummary, bookCover, purchaseLink, emotionalExplanation } = data;
-
-          resultDiv.innerHTML = `
-            <img src="${bookCover}" alt="${bookTitle}" class="book-cover" />
-            <div class="book-info">
-              <h2>${bookTitle}</h2>
-              <p>${bookSummary}</p>
-              <a href="${purchaseLink}" class="book-link" target="_blank">책 구매하기</a>
-              <p><strong>추천 이유:</strong> ${emotionalExplanation}</p>
-            </div>
-          `;
-        } else {
-          resultDiv.innerHTML = `<p>오류가 발생했습니다: ${data.error}</p>`;
-        }
-      } catch (error) {
-        resultDiv.innerHTML = '문제가 발생했습니다. 다시 시도해주세요.';
-      }
-
-      // 로딩 화면 숨기고 결과 화면 보여줌
-      loadingDiv.style.display = 'none';
-      resultDiv.style.display = 'block';
-    }
-  </script>
+  <script src="recommend.js"></script> <!-- JavaScript 파일 연결 -->
 </body>
 </html>

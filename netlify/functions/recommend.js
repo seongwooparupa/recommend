@@ -33,17 +33,18 @@ exports.handler = async function(event, context) {
 
   const data = await naverResponse.json();
 
+  // 첫 번째 책 데이터를 반환
   if (data.items && data.items.length > 0) {
     const book = data.items[0];  // 첫 번째 책 정보 선택
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        title: book.title,
-        author: book.author,
-        description: book.description,
-        image: book.image,
-        link: book.link
+        title: book.title || "제목 정보 없음",
+        author: book.author || "저자 정보 없음",
+        description: book.description || "설명 정보 없음",
+        image: book.image || "이미지 없음",
+        link: book.link || "#"
       })
     };
   } else {

@@ -12,7 +12,7 @@ async function showRecommendedBook() {
   resultDiv.style.display = 'none';
 
   try {
-    // Netlify 함수를 호출해 책 추천 받기
+    // Netlify 함수 호출
     const response = await fetch('/.netlify/functions/recommend', {
       method: 'POST',
       headers: {
@@ -23,13 +23,18 @@ async function showRecommendedBook() {
 
     const bookData = await response.json();
 
-    resultDiv.innerHTML = `
-      <img src="${bookData.image}" alt="${bookData.title}" class="book-cover" />
-      <h2>${bookData.title}</h2>
-      <p>저자: ${bookData.author}</p>
-      <p>${bookData.description}</p>
-      <a href="${bookData.link}" class="book-link" target="_blank">책 구매하기</a>
-    `;
+    if (response.ok) {
+      // 책 정보를 화면에 표시
+      resultDiv.innerHTML = `
+        <img src="${bookData.image}" alt="${bookData.title}" class="book-cover" />
+        <h2>${bookData.title}</h2>
+        <p>저자: ${bookData.author}</p>
+        <p>${bookData.description}</p>
+        <a href="${bookData.link}" class="book-link" target="_blank">책 구매하기</a>
+      `;
+    } else {
+      resultDiv.innerHTML = `<p>오류가 발생했습니다: ${bookData.message}</p>`;
+    }
   } catch (error) {
     resultDiv.innerHTML = `<p>오류가 발생했습니다: ${error.message}</p>`;
   }
